@@ -1,12 +1,14 @@
 
 '''
-Sorting Algorithms
+Section 1: Sorting Algorithms
 
         1. Insertion Sort
         2. Quick Sort
         3. Bucket Sort
         4. Bubble Sort
         5. Merge Sort
+
+Section 2: Benchmarking
 
 Author: Isabella Doyle
 '''
@@ -17,7 +19,11 @@ import random
 import numpy as np
 import pandas as pd
 
-# Implementation of Insertion Sort algorithm | Ref: [1]
+
+''' 
+1. Insertion Sort algorithm | Ref: [1]
+'''
+
 def insertionSort(arr):
     
     # Iterates over elements in the given arr starting at index 2
@@ -29,41 +35,50 @@ def insertionSort(arr):
     
     return arr
 
-# Implementations of Quick Sort algorithm | Ref: [2]            
-# !!!! CHANGE THIS ONE TO THE ONE HERE: https://brilliant.org/wiki/quick-sort/
+''' 
+2. Quick Sort algorithm | Ref: [2]
+'''
+
 def quickSort(arr):
-
-    n = len(arr)
     
-    if n < 2:           # Base case for recursion when the arr contains one item
+    # Base case for recursion when the array contains one item
+    if len(arr) < 2:       
         return arr
-    
-    pivot = 0           # Position of partition
+    else:
+        
+        # Chooses random value in array to use as pivot(position of partition)
+        pivot = random.choice(arr)  
 
-    # Partitioning loop
-    for i in range(1, n): 
-         if arr[i] <= arr[0]:
-            pivot += 1
-            temp = arr[i]
-            arr[i] = arr[pivot]
-            arr[pivot] = temp
+        # Empty lists to store partitioned arrays        
+        less = []
+        pivotList = []
+        more = []
 
-    temp = arr[0]
-    arr[0] = arr[pivot] 
-    arr[pivot] = temp   # Places pivot in the correct position
+        # Partitioning loop creates smaller arrays
+        for i in arr: 
+            if i < pivot:
+                less.append(i)
+            elif i > pivot:
+                more.append(i)
+            else:
+                pivotList.append(i)
+        
+        # Recursively calls function breaking down arrays into smaller arrays & sorts them
+        less = quickSort(less)
+        more = quickSort(more)
 
-    left = quickSort(arr[0:pivot]) # Sorts the items to the left of pivot
-    right = quickSort(arr[pivot + 1: n]) # Sorts the items to the right of pivot
-    arr = left + [arr[pivot]] + right # Combines the sorted items
+        # Merges ordered lists into one sorted list
+        return less + pivotList + more
 
-    return arr
+'''
+3. Bucket Sort algorithm | Ref: [3]
+'''
 
-# Implementation of Bucket Sort algorithm | Ref: [3]
 def bucketSort(arr):
     
     # Finds biggest value in the arr, using length of list to decide what value is placed into each bucket
     maximum = max(arr)
-    size = maximum/len(arr)
+    size = maximum / len(arr)
 
     # Creates empty buckets corresponding with length of input list
     bucketList = []
@@ -72,23 +87,26 @@ def bucketSort(arr):
 
     # Places the items in the arr into the appropriate bucket depending on its size
     for i in range(len(arr)):
-        i = int (arr[i] / size)
-        if i != len (arr):
-            bucketList[i].append(arr[i])
+        j = int(arr[i] / size)
+        if j != len(arr):
+            bucketList[j].append(arr[i])
         else:
             bucketList[len(arr) - 1].append(arr[i])
 
     # Sorts items in each bucket using the insertionSort() function
-    for z in range(len(arr)):
-        insertionSort(bucketList[z])
+    for k in range(len(arr)):
+        insertionSort(bucketList[k])
             
     # Concatenates the sorted items from each bucket to form one sorted arr
     final = []
-    for x in range(len (arr)):
-        final = final + bucketList[x]
+    for l in range(len(arr)):
+        final = final + bucketList[l]
     return final
 
-# Implementation of Bubble Sort algorithm | Ref: [4]
+'''
+4. Bubble Sort algorithm | Ref: [4]
+'''
+
 def bubbleSort(arr):
     
     for i in range(len(arr)):
@@ -99,9 +117,11 @@ def bubbleSort(arr):
     
     return arr
 
-# Function called in mergeSort() to merge arrays | Ref: 5
-# This part of the mergeSort alogrithm carries out the actual 
-# sorting of the elements in the array
+'''
+5. Merge Sort algorithm | Ref: 5
+'''
+
+# This part of the mergeSort alogrithm carries out the sorting of the elements in the array
 def merge(left, right): # Takes in two lists from the mergeSort() function
     
     # If left arr is empty return right
@@ -140,7 +160,6 @@ def merge(left, right): # Takes in two lists from the mergeSort() function
 
     return result
 
-# Implemetation of Merge Sort algorithm | Ref: [5]
 # This part of the merge sort algorithm uses the 'divide and conquer' method
 def mergeSort(arr):
     
@@ -159,26 +178,32 @@ def mergeSort(arr):
         right = mergeSort(arr[midpoint:]))
 
 '''
-Benchmarking for sorting algorithms
+Benchmarking the sorting algorithms
 '''
 
 # Generates an array of random numbers with parameters for size & min/max values
-def genRandomArr(n=10, min=1, max=1000):
+def genRandomArr(n):
+    
     # Creates empty array
     arr = []
+    
     # Creates random numbers n times & appends them to 'arr'
     for i in range(0, n):
-        num = random.randint(min, max)
+        num = random.randint(0, 100)
         arr.append(num)
+    
     # Returns array to caller
     return arr
 
 # Times algorithm
 def timeAlgo(algo, arr):
+    
     # Starts timing
     start = time.time()
+    
     # Executes algorithm
     algo(arr)
+    
     # Ends timing
     end = time.time()
     totalTime = end - start
@@ -187,15 +212,50 @@ def timeAlgo(algo, arr):
 # Main program
 def main():
 
+    # Array of various input sizes for random number generator
+    input = [100, 250, 500, 750, 1000, 1250, 2500, 3750, 5000, 6250, 7500, 8750, 10000]
 
+    # Arrays to store results from benchmark
+    insertionTimes = []
+    quickTimes = []
+    bucketTimes = []
+    bubbleTimes = []
+    mergeTimes = []
 
-# Executes the code 10X and returns how long each exectution took p/s
+    # Loops over input array
+    for n in input:
 
+        # Generates random arrays with genRandomArr() function & sizes specified in the 'input' array 
+        inputArr = genRandomArr(n)
+
+        # Stores 10 run-time values temporarily for each algorithm
+        insertionTemp = []
+        quickTemp = []
+        bucketTemp = []
+        bubbleTemp = []
+        mergeTemp = []
+
+        # Executes & times each algorithm 10X for each size specified in 'input' 
+        # array & appends result of each execution to the temporary lists
+        for j in range(10):
+            #insertionTemp.append(timeAlgo(insertionSort, inputArr))
+            #quickTemp.append(timeAlgo(quickSort, inputArr))
+            #bucketTemp.append(timeAlgo(bucketSort, inputArr))
+            bubbleTemp.append(timeAlgo(bubbleSort, inputArr))
+            #mergeTemp.append(timeAlgo(mergeSort, inputArr))
+        print(j, "bubble", bubbleTemp)  
+
+# Initiates program       
+#if __name__ == "__main__":
+    main()
+arr = genRandomArr(10)
+print(arr)
+print(bucketSort(arr))
 '''
 REFERENCES
 
 [1] "Insertion Sort In Python Explained (With Example And Code)" by FelixTechTips. Available at: https://www.youtube.com/watch?v=R_wDA-PmGE4
-[2] https://www.educative.io/edpresso/how-to-implement-quicksort-in-python 
+[2] https://brilliant.org/wiki/quick-sort/
 [3] https://stackabuse.com/bucket-sort-in-python/
 [4] Code adapted from https://stackabuse.com/bubble-sort-in-python
 [5] https://realpython.com/sorting-algorithms-python/
