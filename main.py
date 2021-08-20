@@ -1,14 +1,12 @@
-
 '''
-Section 1: Sorting Algorithms
-
+1: Sorting Algorithms
         1. Insertion Sort
         2. Quick Sort
         3. Bucket Sort
         4. Bubble Sort
         5. Merge Sort
-
-Section 2: Benchmarking
+2: Benchmarking
+3: Plotting data
 
 Author: Isabella Doyle
 '''
@@ -18,7 +16,7 @@ import time
 import random
 import numpy as np
 import pandas as pd
-
+import matplotlib.pyplot as plt
 
 ''' 
 1. Insertion Sort algorithm | Ref: [1]
@@ -26,9 +24,10 @@ import pandas as pd
 
 def insertionSort(arr):
     
-    # Iterates over elements in the given arr starting at index 2
+    # Iterates over elements in the given array starting at second position
     for i in range(1, len(arr)):
         
+        # If value at index 0 is greater than value at index 1, they are swapped
         while arr[i - 1] > arr[i] and i > 0:
             arr[i - 1], arr[i] = arr[i], arr[i - 1]
             i -= 1  # Moves down one index
@@ -109,10 +108,13 @@ def bucketSort(arr):
 
 def bubbleSort(arr):
     
+    # Iterates over each element in the array
     for i in range(len(arr)):
-    
+        
+        # Compares elements beside each other
         for i in range(len(arr) - 1):
             if arr[i] > arr[i + 1]:
+                # Swaps elements
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
     
     return arr
@@ -121,7 +123,7 @@ def bubbleSort(arr):
 5. Merge Sort algorithm | Ref: 5
 '''
 
-# This part of the mergeSort alogrithm carries out the sorting of the elements in the array
+# This part of the mergeSort alogrithm sorts the elements in the array
 def merge(left, right): # Takes in two lists from the mergeSort() function
     
     # If left arr is empty return right
@@ -147,8 +149,8 @@ def merge(left, right): # Takes in two lists from the mergeSort() function
             result.append(right[indexRight])
             indexRight += 1
 
-        # If you reach the end of either arr, then you can
-        # add the remaining elements from the other arr to
+        # If you reach the end of either array, then you can
+        # add the remaining elements from the other array to
         # the result and break the loop
         if indexRight == len(right):
             result += left[indexLeft:]
@@ -167,7 +169,8 @@ def mergeSort(arr):
     if len(arr) < 2:
         return arr
 
-    midpoint = len(arr) // 2    # Identifies midpoint of array
+    # Identifies midpoint of array
+    midpoint = len(arr) // 2 
 
     # Using recursion the partitioned portions of the array are 
     # broken down until they are individual components, after being
@@ -235,22 +238,49 @@ def main():
         bubbleTemp = []
         mergeTemp = []
 
-        # Executes & times each algorithm 10X for each size specified in 'input' 
-        # array & appends result of each execution to the temporary lists
+        # Executes & times each algorithm 10X for each size specified in 'input' array 
+        # & appends result of each execution to the temporary lists
         for j in range(10):
-            #insertionTemp.append(timeAlgo(insertionSort, inputArr))
-            #quickTemp.append(timeAlgo(quickSort, inputArr))
-            #bucketTemp.append(timeAlgo(bucketSort, inputArr))
+            insertionTemp.append(timeAlgo(insertionSort, inputArr))
+            quickTemp.append(timeAlgo(quickSort, inputArr))
+            bucketTemp.append(timeAlgo(bucketSort, inputArr))
             bubbleTemp.append(timeAlgo(bubbleSort, inputArr))
-            #mergeTemp.append(timeAlgo(mergeSort, inputArr))
-        print(j, "bubble", bubbleTemp)  
+            mergeTemp.append(timeAlgo(mergeSort, inputArr))
+        
+        # Appends averaged time results (in miliseconds) from benchmark to lists above
+        insertionTimes.append(np.around(np.mean(insertionTemp) * 1000, 3))
+        quickTimes.append(np.around(np.mean(quickTemp) * 1000, 3))
+        bucketTimes.append(np.around(np.mean(bucketTemp) * 1000, 3))
+        bubbleTimes.append(np.around(np.mean(bubbleTemp) * 1000, 3))
+        mergeTimes.append(np.around(np.mean(mergeTemp) * 1000, 3))
+
+    # Creating DataFrame object with run-time results of algorithms | Ref: [7]
+    df = pd.DataFrame({"Size" : input,
+                        "Insertion Sort" : insertionTimes,
+                        "Quick Sort" : quickTimes,
+                        "Bucket Sort" : bucketTimes,
+                        "Bubble Sort" : bubbleTimes,
+                        "Merge Sort" : mergeTimes})
+    
+    # Sets 'size' as index
+    df.set_index('Size', inplace = True)
+    # Flips the columns and rows for improved readability
+    flipDf = df.T
+    
+    # Plots benchmarked data on graph
+    df.plot(kind = 'line', 
+            title = 'Benchmark Results',
+            xlabel = 'Input Size', 
+            ylabel = 'Milliseconds')   
+    plt.show()
+
+    print(flipDf)
+    return df    
 
 # Initiates program       
-#if __name__ == "__main__":
+if __name__ == "__main__":
     main()
-arr = genRandomArr(10)
-print(arr)
-print(bucketSort(arr))
+
 '''
 REFERENCES
 
@@ -260,6 +290,7 @@ REFERENCES
 [4] Code adapted from https://stackabuse.com/bubble-sort-in-python
 [5] https://realpython.com/sorting-algorithms-python/
 [6] "Random - Generate pseudo-random numbers" https://docs.python.org/3/library/random.html
+[7] https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.line.html
 
 '''
 
