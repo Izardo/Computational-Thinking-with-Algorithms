@@ -79,7 +79,7 @@ def bucketSort(arr):
     maximum = max(arr)
     size = maximum / len(arr)
 
-    # Creates empty buckets corresponding with length of input list
+    # Creates empty buckets corresponding to the length of input array
     bucketList = []
     for x in range(len(arr)):
         bucketList.append([]) 
@@ -113,8 +113,9 @@ def bubbleSort(arr):
         
         # Compares elements beside each other
         for i in range(len(arr) - 1):
+            
+            # Swaps elements
             if arr[i] > arr[i + 1]:
-                # Swaps elements
                 arr[i], arr[i + 1] = arr[i + 1], arr[i]
     
     return arr
@@ -138,10 +139,10 @@ def merge(left, right): # Takes in two lists from the mergeSort() function
     indexLeft = 0   # Pointers 
     indexRight = 0  
 
-    
+    # Executes until result contains all items from original array
     while len(result) < len(left) + len(right):
         
-
+        # Decides which element to take next from the arrays
         if left[indexLeft] <= right[indexRight]:
             result.append(left[indexLeft])
             indexLeft += 1
@@ -149,9 +150,8 @@ def merge(left, right): # Takes in two lists from the mergeSort() function
             result.append(right[indexRight])
             indexRight += 1
 
-        # If you reach the end of either array, then you can
-        # add the remaining elements from the other array to
-        # the result and break the loop
+        # When the end of one array is reached, the remaining items from the 
+        # other array are added to it
         if indexRight == len(right):
             result += left[indexLeft:]
             break
@@ -181,7 +181,7 @@ def mergeSort(arr):
         right = mergeSort(arr[midpoint:]))
 
 '''
-Benchmarking the sorting algorithms
+2. Benchmarking the sorting algorithms
 '''
 
 # Generates an array of random numbers with parameters for size & min/max values
@@ -254,13 +254,16 @@ def main():
         bubbleTimes.append(np.around(np.mean(bubbleTemp) * 1000, 3))
         mergeTimes.append(np.around(np.mean(mergeTemp) * 1000, 3))
 
-    # Creating DataFrame object with run-time results of algorithms | Ref: [7]
+    # Creates DataFrame object with run-time results of algorithms | Ref: [7]
     df = pd.DataFrame({"Size" : input,
                         "Insertion Sort" : insertionTimes,
                         "Quick Sort" : quickTimes,
                         "Bucket Sort" : bucketTimes,
-                        "Bubble Sort" : bubbleTimes,
+                        #"Bubble Sort" : bubbleTimes,
                         "Merge Sort" : mergeTimes})
+    '''
+    3. Plotting Data 
+    '''
     
     # Sets 'size' as index
     df.set_index('Size', inplace = True)
@@ -284,14 +287,12 @@ if __name__ == "__main__":
 '''
 REFERENCES
 
-[1] "Insertion Sort In Python Explained (With Example And Code)" by FelixTechTips. Available at: https://www.youtube.com/watch?v=R_wDA-PmGE4
-[2] https://brilliant.org/wiki/quick-sort/
-[3] https://stackabuse.com/bucket-sort-in-python/
-[4] Code adapted from https://stackabuse.com/bubble-sort-in-python
-[5] https://realpython.com/sorting-algorithms-python/
-[6] "Random - Generate pseudo-random numbers" https://docs.python.org/3/library/random.html
-[7] https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.line.html
+[1] "Insertion Sort In Python Explained (With Example And Code)" by FelixTechTips. Available at: https://www.youtube.com/watch?v=R_wDA-PmGE4 [Accessed: 17 July 2021]
+[2] "Quick Sort" by Brilliant. Available at: https://brilliant.org/wiki/quick-sort/ [Accessed: 29 July 2021]
+[3] "Bucket Sort in Python" by Muhammad Junaid Khalid. Available at: https://stackabuse.com/bucket-sort-in-python/ [Accessed: 10 Aug 2021]
+[4] "Bubble Sort in Python" by Olivera Popović. Available at: https://stackabuse.com/bubble-sort-in-python [Accessed: 11 Aug 2021]
+[5] "The Merge Sort Algorithm in Python" by Real Python. Available at: https://realpython.com/sorting-algorithms-python/#the-merge-sort-algorithm-in-python [Accessed: 12 Aug 2021]
+[6] "Random - Generate pseudo-random numbers" by Python Docs. Available at: https://docs.python.org/3/library/random.html [Accessed: 20 July 2021]
+[7] "DataFrame.plot.line" by pandas, Available at: https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.line.html [Accessed: 12 August 2021]
 
 '''
-
-### THIS FOR BENCHMARKING AND EVERYTHING: https://realpython.com/sorting-algorithms-python/
