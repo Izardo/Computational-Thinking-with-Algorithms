@@ -1,1 +1,1 @@
-# Computational-Thinking-with-Algoritms
+# Computational-Thinking-with-Algorithms
